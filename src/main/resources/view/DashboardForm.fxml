@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane fx:id="pane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.gdse.controller.DashboardFormController">
+   <children>
+      <Label alignment="CENTER" layoutX="156.0" layoutY="55.0" prefHeight="41.0" prefWidth="296.0" text="DASHBOARD" textFill="#136cb5">
+         <font>
+            <Font name="System Bold" size="39.0" />
+         </font>
+      </Label>
+      <Button layoutX="48.0" layoutY="190.0" mnemonicParsing="false" onAction="#btnQRgeneratorOnAction" prefHeight="78.0" prefWidth="216.0" style="-fx-background-color: #e09f3e;" text="QR Generator" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="21.0" />
+         </font>
+      </Button>
+      <Button layoutX="318.0" layoutY="190.0" mnemonicParsing="false" onAction="#btnQRscannerOnAction" prefHeight="78.0" prefWidth="216.0" style="-fx-background-color: #9e2a2b;" text="QR Scanner" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="21.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
