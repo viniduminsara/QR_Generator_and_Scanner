@@ -56,14 +56,13 @@ public class WebcamService extends Service<Image> {
                             e.printStackTrace();
                         }
                         if(bimg!=null) {
-                            String s = QrDecoder.decodeQRCode(bimg);
 
                             Mat img = BufferedImage2Mat(bimg);
                             QRCodeDetector decoder = new QRCodeDetector();
                             Mat points = new Mat();
                             String data = decoder.detectAndDecode(img, points);
-                            if(s != null){
-                                updateMessage(s);
+                            if(!data.isEmpty()){
+                                updateMessage(data);
                                 if (!points.empty()) {
                                     System.out.println("Decoded data: " + data);
 
@@ -73,7 +72,7 @@ public class WebcamService extends Service<Image> {
                                         Imgproc.line(img, pt1, pt2, new Scalar(255, 0, 0), 3);
                                     }
 
-                                    HighGui.imshow("Detected QR code", img);
+                                    HighGui.imshow("Detected QR code - "+data, img);
                                     HighGui.waitKey(0);
                                     HighGui.destroyAllWindows();
 
