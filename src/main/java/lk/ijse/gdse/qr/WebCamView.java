@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 
 public class WebCamView {
 
@@ -13,7 +14,7 @@ public class WebCamView {
 
     private final Label statusPlaceholder;
 
-    public WebCamView(WebcamService service,ImageView imageView) {
+    public WebCamView(WebcamService service, ImageView imageView) {
         this.service = service ;
         this.imageView = imageView;
         imageView.setPreserveRatio(false);

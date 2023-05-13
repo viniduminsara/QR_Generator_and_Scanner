@@ -6,14 +6,28 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import org.opencv.core.*;
+import org.opencv.core.Point;
+import org.opencv.highgui.HighGui;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.QRCodeDetector;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public class WebcamService extends Service<Image> {
     private BufferedImage bimg;
     private final Webcam cam;
     private final WebcamResolution resolution;
+
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
 
     public WebcamService(Webcam webcam, WebcamResolution resolution) {
         this.cam = webcam;
@@ -43,8 +57,27 @@ public class WebcamService extends Service<Image> {
                         }
                         if(bimg!=null) {
                             String s = QrDecoder.decodeQRCode(bimg);
-                            if(s!=null){
+
+                            Mat img = BufferedImage2Mat(bimg);
+                            QRCodeDetector decoder = new QRCodeDetector();
+                            Mat points = new Mat();
+                            String data = decoder.detectAndDecode(img, points);
+                            if(s != null){
                                 updateMessage(s);
+                                if (!points.empty()) {
+                                    System.out.println("Decoded data: " + data);
+
+                                    for (int i = 0; i < points.cols(); i++) {
+                                        Point pt1 = new Point(points.get(0, i));
+                                        Point pt2 = new Point(points.get(0, (i + 1) % 4));
+                                        Imgproc.line(img, pt1, pt2, new Scalar(255, 0, 0), 3);
+                                    }
+
+                                    HighGui.imshow("Detected QR code", img);
+                                    HighGui.waitKey(0);
+                                    HighGui.destroyAllWindows();
+
+                                }
                             }else{
                                 try {
                                     updateProgress(10,100);
@@ -96,5 +129,32 @@ public class WebcamService extends Service<Image> {
 
     public int getCamHeight(){
         return resolution.getSize().height;
+    }
+
+    public static Mat BufferedImage2Mat(BufferedImage image) {
+        image = convertTo3ByteBGRType(image);
+        byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        Mat mat = new Mat(image.getHeight(), image.getWidth(), CvType.CV_8UC3);
+        mat.put(0, 0, data);
+        return mat;
+    }
+
+    public static BufferedImage Mat2BufferedImage(Mat matrix) {
+        MatOfByte mob=new MatOfByte();
+        Imgcodecs.imencode(".jpg", matrix, mob);
+        BufferedImage read = null;
+        try {
+            read = ImageIO.read(new ByteArrayInputStream(mob.toArray()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return read;
+    }
+
+    private static BufferedImage convertTo3ByteBGRType(BufferedImage image) {
+        BufferedImage convertedImage = new BufferedImage(image.getWidth(), image.getHeight(),
+                BufferedImage.TYPE_3BYTE_BGR);
+        convertedImage.getGraphics().drawImage(image, 0, 0, null);
+        return convertedImage;
     }
 }

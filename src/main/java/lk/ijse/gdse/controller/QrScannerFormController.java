@@ -6,10 +6,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import lk.ijse.gdse.qr.WebCamView;
 import lk.ijse.gdse.qr.WebcamService;
@@ -36,28 +39,39 @@ public class QrScannerFormController implements Initializable {
     @FXML
     private Label lbltext;
 
+    @FXML
+    private Button startbtn;
+
+    @FXML
+    private Button stopbtn;
+
     private WebcamService service;
 
     @FXML
     void startBtnOnAction(ActionEvent event) {
         service.restart();
         prograss.setVisible(true);
+        startbtn.setDisable(true);
+        stopbtn.setDisable(false);
     }
 
     @FXML
     void stopBtnOnAction(ActionEvent event) {
         service.cancel();
         prograss.setVisible(false);
+        startbtn.setDisable(false);
     }
 
     @FXML
     void backBtnOnAction(ActionEvent event) throws IOException {
+        service.cancel();
         mainPane.getChildren().clear();
         mainPane.getChildren().add(FXMLLoader.load(getClass().getResource("/view/DashboardForm.fxml")));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        stopbtn.setDisable(true);
 
         prograss.setVisible(false);
         Webcam cam = Webcam.getWebcams().get(0);
